@@ -144,9 +144,6 @@ anomaly-grid-py/
 # Run all tests
 pytest tests/
 
-# Run with coverage (requires pytest-cov)
-pytest tests/ --cov=anomaly_grid_py
-
 # Run specific test file
 pytest tests/test_anomaly_detector.py
 ```
