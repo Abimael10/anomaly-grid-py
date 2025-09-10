@@ -1,7 +1,6 @@
 """Performance tests for the AnomalyDetector class."""
 
 import time
-
 import anomaly_grid_py
 
 
