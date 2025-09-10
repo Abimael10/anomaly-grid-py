@@ -58,7 +58,7 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest tests/ -v --cov=anomaly_grid --cov-report=xml --cov-report=term
+        pytest tests/ -v --cov=anomaly_grid_py --cov-report=xml --cov-report=term
 
     - name: Upload coverage to Codecov
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
@@ -84,13 +84,13 @@ jobs:
         pip install black ruff mypy
 
     - name: Check formatting with Black
-      run: black --check python/ tests/
+      run: black --check python/anomaly_grid_py/ tests/
 
     - name: Lint with Ruff
-      run: ruff check python/ tests/
+      run: ruff check python/anomaly_grid_py/ tests/
 
     - name: Type check with MyPy
-      run: mypy python/ --ignore-missing-imports
+      run: mypy python/anomaly_grid_py/ --ignore-missing-imports
 
   security:
     name: Security Scan
@@ -109,7 +109,7 @@ jobs:
         pip install bandit safety
 
     - name: Run Bandit security scan
-      run: bandit -r python/ -f json -o bandit-report.json || true
+      run: bandit -r python/anomaly_grid_py/ -f json -o bandit-report.json || true
 
     - name: Run Safety check
       run: safety check --json --output safety-report.json || true
@@ -138,7 +138,6 @@ jobs:
     - name: Build wheels
       uses: PyO3/maturin-action@v1
       with:
-        target: ${{ matrix.target }}
         args: --release --out dist --find-interpreter
         sccache: 'true'
         manylinux: auto
@@ -178,11 +177,11 @@ jobs:
         
         # Test basic functionality
         python -c "
-        import anomaly_grid
+        import anomaly_grid_py
         print('✅ Package imports successfully')
         
         # Test basic functionality
-        detector = anomaly_grid.AnomalyDetector(max_order=3)
+        detector = anomaly_grid_py.AnomalyDetector(max_order=3)
         detector.train(['A', 'B', 'C'] * 10)
         results = detector.detect(['A', 'B', 'X', 'Y'], threshold=0.1)
         print(f'✅ Basic functionality works: {len(results)} anomalies detected')
