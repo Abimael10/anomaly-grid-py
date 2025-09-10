@@ -2,7 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/anomaly-grid-py.svg)](https://badge.fury.io/py/anomaly-grid-py)
 [![Python versions](https://img.shields.io/pypi/pyversions/anomaly-grid-py.svg)](https://pypi.org/project/anomaly-grid-py/)
-[![Downloads](https://pepy.tech/badge/anomaly-grid-py)](https://pepy.tech/project/anomaly-grid-py)
+[![Downloads](https://img.shields.io/pypi/dm/anomaly-grid-py.svg)](https://pypi.org/project/anomaly-grid-py/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/abimael10/anomaly-grid-py/workflows/CI/badge.svg)](https://github.com/abimael10/anomaly-grid-py/actions)
 [![Rust](https://img.shields.io/badge/rust-stable-brightgreen.svg)](https://www.rust-lang.org/)
