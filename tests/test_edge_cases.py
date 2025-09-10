@@ -1,7 +1,8 @@
 """Edge case tests for the AnomalyDetector class."""
 
-import anomaly_grid_py
 import pytest
+
+import anomaly_grid_py
 
 
 class TestEdgeCases:

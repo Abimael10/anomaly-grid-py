@@ -76,8 +76,8 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-force-single-line = true
 known-first-party = ["anomaly_grid_py"]
+split-on-trailing-comma = false
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
