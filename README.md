@@ -98,7 +98,10 @@ Information about an anomaly detection result.
 
 ```bash
 # Install development dependencies
-pip install maturin[patchelf] pytest
+pip install maturin pytest
+
+# On Linux, also install patchelf
+pip install patchelf  # Linux only
 
 # Build in development mode
 maturin develop
