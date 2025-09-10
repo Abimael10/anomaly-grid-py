@@ -4,7 +4,7 @@ Python bindings for anomaly detection using Markov models. Train on sequential d
 
 ## Installation
 
-### From PyPI (when published)
+### From PyPI
 
 ```bash
 pip install anomaly-grid-py
@@ -12,7 +12,7 @@ pip install anomaly-grid-py
 
 ### From Source
 
-Currently, this package must be built from source:
+For development or latest features:
 
 ```bash
 # Clone the repository
