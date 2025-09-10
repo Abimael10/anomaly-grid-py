@@ -77,6 +77,10 @@ ignore = [
     "PLR2004",  # Magic value comparisons
 ]
 
+[tool.ruff.lint.isort]
+force-single-line = true
+known-first-party = ["anomaly_grid_py"]
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
