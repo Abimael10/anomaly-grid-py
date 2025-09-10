@@ -1,5 +1,4 @@
-"""
-Anomaly Grid Python - Python bindings for the anomaly-grid Rust library
+"""Anomaly Grid Python - Python bindings for the anomaly-grid Rust library.
 
 A simple and efficient anomaly detection library for sequential data.
 """

@@ -1,9 +1,7 @@
-"""
-Performance tests for the AnomalyDetector class
-"""
+"""Performance tests for the AnomalyDetector class."""
 
-import pytest
 import time
+
 import anomaly_grid_py
 
 
@@ -14,8 +12,6 @@ class TestPerformance:
         """Test training performance."""
         detector = anomaly_grid_py.AnomalyDetector(max_order=3)
         training_data = ["A", "B", "C"] * 1000  # 3000 events
-
-        import time
 
         start_time = time.time()
         detector.train(training_data)
@@ -32,8 +28,6 @@ class TestPerformance:
         detector.train(training_data)
 
         test_data = ["A", "B", "X", "Y"] * 100  # 400 events
-
-        import time
 
         start_time = time.time()
         result = detector.detect(test_data, 0.1)

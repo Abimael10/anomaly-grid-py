@@ -1,8 +1,5 @@
-"""
-Tests for the AnomalyDetector class
-"""
+"""Tests for the AnomalyDetector class."""
 
-import pytest
 import anomaly_grid_py
 
 
@@ -43,7 +40,7 @@ def test_train_and_detect():
         assert hasattr(result, "sequence")
         assert hasattr(result, "likelihood")
         assert hasattr(result, "anomaly_strength")
-        assert result.is_anomaly == True
+        assert result.is_anomaly
 
 
 def test_anomaly_info_properties():
