@@ -54,7 +54,9 @@ jobs:
         pip install maturin[patchelf] pytest pytest-cov pytest-benchmark
 
     - name: Build package
-      run: maturin develop
+      run: |
+        maturin build --release
+        pip install target/wheels/*.whl
 
     - name: Run tests
       run: |
@@ -115,7 +117,7 @@ jobs:
       run: safety check --json --output safety-report.json || true
 
     - name: Upload security reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: security-reports
         path: |
@@ -143,7 +145,7 @@ jobs:
         manylinux: auto
 
     - name: Upload wheels
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: wheels-${{ matrix.os }}
         path: dist
@@ -161,7 +163,7 @@ jobs:
         python-version: "3.11"
 
     - name: Download wheels
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: wheels-ubuntu-latest
         path: dist
@@ -205,7 +207,7 @@ jobs:
         python-version: "3.11"
 
     - name: Download wheels
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: wheels-ubuntu-latest
         path: dist
@@ -219,7 +221,7 @@ jobs:
         pytest tests/test_performance.py -v --benchmark-only --benchmark-json=benchmark.json
 
     - name: Upload benchmark results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: benchmark-results
         path: benchmark.json
