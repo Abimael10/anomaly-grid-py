@@ -58,9 +58,17 @@ jobs:
       run: pip install patchelf
 
     - name: Build package
+      run: maturin build --release
+    
+    - name: Install built wheel (Windows)
+      if: runner.os == 'Windows'
       run: |
-        maturin build --release
-        pip install target/wheels/*.whl
+        $wheel = Get-ChildItem -Path "target/wheels" -Filter "*.whl" | Select-Object -First 1
+        pip install $wheel.FullName
+    
+    - name: Install built wheel (Unix)
+      if: runner.os != 'Windows'
+      run: pip install target/wheels/*.whl
 
     - name: Run tests
       run: |
