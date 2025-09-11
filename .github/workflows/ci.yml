@@ -67,9 +67,9 @@ jobs:
 
     - name: Verify package installation
       run: |
-        python -c "import anomaly_grid_py; print('✅ Package imports successfully')"
-        python -c "from anomaly_grid_py import AnomalyDetector; print('✅ AnomalyDetector imports successfully')"
-        python -c "import anomaly_grid_py; detector = anomaly_grid_py.AnomalyDetector(); print('✅ AnomalyDetector creates successfully')"
+        python -c "import anomaly_grid_py; print('[OK] Package imports successfully')"
+        python -c "from anomaly_grid_py import AnomalyDetector; print('[OK] AnomalyDetector imports successfully')"
+        python -c "import anomaly_grid_py; detector = anomaly_grid_py.AnomalyDetector(); print('[OK] AnomalyDetector creates successfully')"
         
     - name: Test basic functionality
       run: |
@@ -152,9 +152,10 @@ jobs:
     - name: Build wheels
       uses: PyO3/maturin-action@v1
       with:
-        args: --release --out dist --find-interpreter --skip pp311
+        args: --release --out dist --find-interpreter
         sccache: 'true'
         manylinux: auto
+        skip: "pp311"  # Skip PyPy 3.11 due to PyO3 0.21.2 compatibility
       env:
         PYO3_USE_ABI3_FORWARD_COMPATIBILITY: 1
 
@@ -194,18 +195,18 @@ jobs:
         # Test basic functionality
         python -c "
         import anomaly_grid_py
-        print('✅ Package imports successfully')
+        print('[OK] Package imports successfully')
         
         # Test basic functionality
         detector = anomaly_grid_py.AnomalyDetector(max_order=3)
         detector.fit([['A', 'B', 'C']] * 10)
         results = detector.predict([['A', 'B', 'X'], ['X', 'Y', 'Z']], threshold=0.1)
-        print(f'✅ Basic functionality works: {sum(results)} anomalies detected')
+        print(f'[OK] Basic functionality works: {sum(results)} anomalies detected')
         
         # Test type hints
         import inspect
         sig = inspect.signature(detector.predict)
-        print(f'✅ Type hints available: {sig}')
+        print(f'[OK] Type hints available: {sig}')
         "
 
   performance-benchmark:
