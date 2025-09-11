@@ -58,17 +58,25 @@ jobs:
       run: pip install patchelf
 
     - name: Build package
-      run: maturin build --release
+      run: |
+        # Clean old wheels to prevent version conflicts
+        rm -rf target/wheels/
+        maturin build --release
     
     - name: Install built wheel (Windows)
       if: runner.os == 'Windows'
       run: |
+        # Remove old version wheels first
+        Get-ChildItem -Path "target/wheels" -Filter "*-0.1.0-*.whl" | Remove-Item -Force -ErrorAction SilentlyContinue
         $wheel = Get-ChildItem -Path "target/wheels" -Filter "*.whl" | Select-Object -First 1
         pip install $wheel.FullName
     
     - name: Install built wheel (Unix)
       if: runner.os != 'Windows'
-      run: pip install target/wheels/*.whl
+      run: |
+        # Clean old wheels and install only the latest
+        rm -f target/wheels/*-0.1.0-*.whl
+        pip install target/wheels/*.whl
 
     - name: Run tests
       run: |
@@ -179,8 +187,8 @@ jobs:
         python -m venv test_env
         source test_env/bin/activate
         
-        # Install wheel
-        pip install dist/*.whl
+        # Install wheel (only latest version)
+        pip install dist/*-0.3.0-*.whl || pip install dist/*.whl
         
         # Test basic functionality
         python -c "
@@ -219,7 +227,9 @@ jobs:
 
     - name: Install wheel and benchmark dependencies
       run: |
-        pip install dist/*.whl pytest pytest-benchmark
+        # Install only the latest version wheel
+        pip install dist/*-0.3.0-*.whl || pip install dist/*.whl
+        pip install pytest pytest-benchmark
 
     - name: Run performance benchmarks
       run: |
