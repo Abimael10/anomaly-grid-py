@@ -57,34 +57,29 @@ jobs:
       if: runner.os == 'Linux'
       run: pip install patchelf
 
-    - name: Build package
+    - name: Build and install package in development mode
       run: |
-        # Clean old wheels to prevent version conflicts
-        rm -rf target/wheels/
         # Set PyO3 compatibility flag for newer Python versions
         export PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
-        maturin build --release
+        maturin develop
       env:
         PYO3_USE_ABI3_FORWARD_COMPATIBILITY: 1
-    
-    - name: Install built wheel (Windows)
-      if: runner.os == 'Windows'
+
+    - name: Verify package installation
       run: |
-        # Remove old version wheels first
-        Get-ChildItem -Path "target/wheels" -Filter "*-0.1.0-*.whl" | Remove-Item -Force -ErrorAction SilentlyContinue
-        $wheel = Get-ChildItem -Path "target/wheels" -Filter "*.whl" | Select-Object -First 1
-        pip install $wheel.FullName
-    
-    - name: Install built wheel (Unix)
-      if: runner.os != 'Windows'
+        python -c "import anomaly_grid_py; print('✅ Package imports successfully')"
+        python -c "from anomaly_grid_py import AnomalyDetector; print('✅ AnomalyDetector imports successfully')"
+        python -c "detector = anomaly_grid_py.AnomalyDetector(); print('✅ AnomalyDetector creates successfully')"
+        
+    - name: Test basic functionality
       run: |
-        # Clean old wheels and install only the latest
-        rm -f target/wheels/*-0.1.0-*.whl
-        pip install target/wheels/*.whl
+        python test_basic_functionality.py
 
     - name: Run tests
       run: |
-        pytest tests/ -v
+        # Run tests from a different directory to ensure we're using installed package
+        cd /tmp
+        python -m pytest $GITHUB_WORKSPACE/tests/ -v
 
   lint:
     name: Lint and Format Check
@@ -203,13 +198,13 @@ jobs:
         
         # Test basic functionality
         detector = anomaly_grid_py.AnomalyDetector(max_order=3)
-        detector.train(['A', 'B', 'C'] * 10)
-        results = detector.detect(['A', 'B', 'X', 'Y'], threshold=0.1)
-        print(f'✅ Basic functionality works: {len(results)} anomalies detected')
+        detector.fit([['A', 'B', 'C']] * 10)
+        results = detector.predict([['A', 'B', 'X'], ['X', 'Y', 'Z']], threshold=0.1)
+        print(f'✅ Basic functionality works: {sum(results)} anomalies detected')
         
         # Test type hints
         import inspect
-        sig = inspect.signature(detector.detect)
+        sig = inspect.signature(detector.predict)
         print(f'✅ Type hints available: {sig}')
         "
 

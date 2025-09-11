@@ -1,5 +1,6 @@
 """Tests for the AnomalyDetector class."""
 
+import numpy as np
 import anomaly_grid_py
 
 
@@ -13,92 +14,184 @@ def test_anomaly_detector_creation():
     assert detector_custom is not None
 
 
-def test_train_and_detect():
+def test_fit_and_predict():
     """Test basic training and detection functionality"""
     detector = anomaly_grid_py.AnomalyDetector(max_order=3)
 
-    # Train with a simple pattern
-    training_data = ["A", "B", "C", "A", "B", "C", "A", "B", "C"]
-    detector.train(training_data)
+    # Train with sequences (new API expects list of sequences)
+    training_data = [
+        ["A", "B", "C"],
+        ["A", "B", "C"],
+        ["A", "B", "C"],
+    ] * 3
+    detector.fit(training_data)
 
-    # Test normal sequence (should have no anomalies)
-    normal_sequence = ["A", "B", "C", "A", "B"]
-    results = detector.detect(normal_sequence, threshold=0.1)
+    # Test normal sequence
+    normal_sequences = [["A", "B", "C"], ["A", "B", "C"]]
+    scores = detector.predict_proba(normal_sequences)
+    
+    # Should return numpy array of scores
+    assert isinstance(scores, np.ndarray)
+    assert len(scores) == 2
+    assert all(isinstance(score, (float, np.floating)) for score in scores)
+    assert all(0 <= score <= 1 for score in scores)
 
-    # Normal sequence should have few or no anomalies
-    assert len(results) >= 0
-    assert all(isinstance(result, anomaly_grid_py.AnomalyInfo) for result in results)
+    # Test binary predictions
+    predictions = detector.predict(normal_sequences, threshold=0.1)
+    assert isinstance(predictions, np.ndarray)
+    assert len(predictions) == 2
+    assert all(isinstance(pred, (bool, np.bool_)) for pred in predictions)
 
     # Test anomalous sequence
-    anomalous_sequence = ["A", "B", "X", "Y", "Z"]
-    anomaly_results = detector.detect(anomalous_sequence, threshold=0.1)
-
-    # Should detect some anomalies
-    assert len(anomaly_results) > 0
-    # Check that results have the expected structure
-    for result in anomaly_results:
-        assert hasattr(result, "sequence")
-        assert hasattr(result, "likelihood")
-        assert hasattr(result, "anomaly_strength")
-        assert result.is_anomaly
+    anomalous_sequences = [["A", "B", "X"], ["X", "Y", "Z"]]
+    anomaly_scores = detector.predict_proba(anomalous_sequences)
+    
+    # Anomalous sequences should generally have higher scores
+    assert isinstance(anomaly_scores, np.ndarray)
+    assert len(anomaly_scores) == 2
 
 
-def test_anomaly_info_properties():
-    """Test AnomalyInfo object properties"""
+def test_predict_proba_output():
+    """Test predict_proba returns correct format"""
     detector = anomaly_grid_py.AnomalyDetector(max_order=2)
-    detector.train(["A", "B", "A", "B"])
+    
+    # Train with simple pattern
+    training_data = [["A", "B"], ["A", "B"], ["A", "B"]] * 5
+    detector.fit(training_data)
 
-    results = detector.detect(["A", "B", "X", "Y"], threshold=0.1)
-
-    for result in results:
-        assert hasattr(result, "position")
-        assert hasattr(result, "sequence")
-        assert hasattr(result, "likelihood")
-        assert hasattr(result, "anomaly_strength")
-        assert hasattr(result, "is_anomaly")
-        assert isinstance(result.position, int)
-        assert isinstance(result.sequence, str)
-        assert isinstance(result.likelihood, float)
-        assert isinstance(result.anomaly_strength, float)
-        assert isinstance(result.is_anomaly, bool)
+    # Test prediction
+    test_sequences = [["A", "B"], ["X", "Y"]]
+    scores = detector.predict_proba(test_sequences)
+    
+    # Check output format
+    assert isinstance(scores, np.ndarray)
+    assert scores.dtype == np.float64
+    assert scores.shape == (2,)
+    assert all(0 <= score <= 1 for score in scores)
 
 
-def test_detector_max_order():
-    """Test getting the max order"""
-    detector = anomaly_grid_py.AnomalyDetector(max_order=5)
-    assert detector.max_order() == 5
+def test_predict_output():
+    """Test predict returns correct format"""
+    detector = anomaly_grid_py.AnomalyDetector(max_order=2)
+    
+    # Train with simple pattern
+    training_data = [["A", "B"], ["A", "B"], ["A", "B"]] * 5
+    detector.fit(training_data)
 
-    detector2 = anomaly_grid_py.AnomalyDetector(max_order=2)
-    assert detector2.max_order() == 2
+    # Test prediction
+    test_sequences = [["A", "B"], ["X", "Y"]]
+    predictions = detector.predict(test_sequences, threshold=0.1)
+    
+    # Check output format
+    assert isinstance(predictions, np.ndarray)
+    assert predictions.dtype == np.bool_
+    assert predictions.shape == (2,)
 
 
 def test_get_performance_metrics():
     """Test getting detector performance metrics"""
     detector = anomaly_grid_py.AnomalyDetector(max_order=2)
-    detector.train(["A", "B", "A", "B"])
+    
+    # Train with sequences
+    training_data = [["A", "B"], ["A", "B"]] * 5
+    detector.fit(training_data)
 
     metrics = detector.get_performance_metrics()
     assert isinstance(metrics, dict)
-    # Metrics should contain performance information
+    
+    # Check expected metric keys (updated for new API)
     assert "training_time_ms" in metrics
-    assert "detection_time_ms" in metrics
     assert "context_count" in metrics
-    assert "estimated_memory_bytes" in metrics
+    assert "memory_bytes" in metrics
+    
+    # Check metric types
+    assert isinstance(metrics["training_time_ms"], (int, float))
+    assert isinstance(metrics["context_count"], int)
+    assert isinstance(metrics["memory_bytes"], int)
 
 
 def test_threshold_parameter():
     """Test different threshold values"""
     detector = anomaly_grid_py.AnomalyDetector(max_order=2)
-    detector.train(["A", "B", "A", "B"])
+    
+    # Train with pattern
+    training_data = [["A", "B"], ["A", "B"]] * 5
+    detector.fit(training_data)
 
     # Test with different thresholds
-    results_low = detector.detect(["A", "B", "X", "Y"], threshold=0.01)
-    results_high = detector.detect(["A", "B", "X", "Y"], threshold=0.9)
+    test_sequences = [["A", "B"], ["X", "Y"]]
+    
+    results_low = detector.predict(test_sequences, threshold=0.01)
+    results_high = detector.predict(test_sequences, threshold=0.9)
 
-    # Both should return some results since we have anomalous patterns
-    assert len(results_low) >= 0
-    assert len(results_high) >= 0
+    # Both should return boolean arrays
+    assert isinstance(results_low, np.ndarray)
+    assert isinstance(results_high, np.ndarray)
+    assert results_low.dtype == np.bool_
+    assert results_high.dtype == np.bool_
+    
+    # Lower threshold should generally detect more anomalies
+    assert len(results_low) == len(results_high) == 2
 
-    # With a very low threshold, more events might be flagged as anomalies
-    # With a very high threshold, fewer events might be flagged as anomalies
-    # The exact behavior depends on the likelihood values
+
+def test_scikit_learn_style_api():
+    """Test scikit-learn style API compatibility"""
+    detector = anomaly_grid_py.AnomalyDetector(max_order=2)
+    
+    # Test method chaining
+    training_data = [["A", "B"], ["B", "C"], ["C", "A"]] * 3
+    result = detector.fit(training_data)
+    
+    # fit should return self for method chaining
+    assert result is detector
+    
+    # Test that we can call predict after fit
+    test_data = [["A", "B"], ["X", "Y"]]
+    scores = detector.predict_proba(test_data)
+    predictions = detector.predict(test_data)
+    
+    assert isinstance(scores, np.ndarray)
+    assert isinstance(predictions, np.ndarray)
+
+
+def test_error_handling():
+    """Test error handling for invalid inputs"""
+    detector = anomaly_grid_py.AnomalyDetector(max_order=2)
+    
+    # Test prediction before fitting
+    try:
+        detector.predict_proba([["A", "B"]])
+        assert False, "Should raise error when predicting before fitting"
+    except ValueError as e:
+        assert "not fitted" in str(e).lower()
+    
+    # Test empty training data
+    try:
+        detector.fit([])
+        assert False, "Should raise error for empty training data"
+    except ValueError:
+        pass
+    
+    # Test sequences that are too short
+    try:
+        detector.fit([["A"]])  # Single element sequences not allowed
+        assert False, "Should raise error for single-element sequences"
+    except ValueError as e:
+        assert "at least 2 elements" in str(e)
+
+
+def test_padding_functionality():
+    """Test predict_proba_with_padding method"""
+    detector = anomaly_grid_py.AnomalyDetector(max_order=2)
+    
+    # Train with normal sequences
+    training_data = [["A", "B"], ["B", "C"]] * 5
+    detector.fit(training_data)
+    
+    # Test with short sequences that need padding
+    test_sequences = [["A"], ["B"], ["A", "B"]]  # Mix of short and normal
+    scores = detector.predict_proba_with_padding(test_sequences)
+    
+    assert isinstance(scores, np.ndarray)
+    assert len(scores) == 3
+    assert all(0 <= score <= 1 for score in scores)

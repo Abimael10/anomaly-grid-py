@@ -6,14 +6,9 @@ This test validates that the anomaly detection library correctly implements
 sequence analysis principles and handles various sequence patterns.
 """
 
-import sys
-import os
 import numpy as np
 import pytest
 from typing import List, Dict, Tuple
-
-# Add parent directory to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "python"))
 
 from anomaly_grid_py import AnomalyDetector, calculate_sequence_stats
 
