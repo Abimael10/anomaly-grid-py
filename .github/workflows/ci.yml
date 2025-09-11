@@ -70,7 +70,7 @@ jobs:
       run: |
         python -c "import anomaly_grid_py; print('✅ Package imports successfully')"
         python -c "from anomaly_grid_py import AnomalyDetector; print('✅ AnomalyDetector imports successfully')"
-        python -c "detector = anomaly_grid_py.AnomalyDetector(); print('✅ AnomalyDetector creates successfully')"
+        python -c "import anomaly_grid_py; detector = anomaly_grid_py.AnomalyDetector(); print('✅ AnomalyDetector creates successfully')"
         
     - name: Test basic functionality
       run: |
