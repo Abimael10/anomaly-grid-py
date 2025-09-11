@@ -6,10 +6,8 @@ This test validates that the anomaly detection library correctly implements
 fundamental anomaly detection principles and logical consistency.
 """
 
-import numpy as np
-import pytest
-from typing import List, Dict, Tuple
 
+import numpy as np
 from anomaly_grid_py import AnomalyDetector, roc_auc_score
 
 
@@ -148,11 +146,11 @@ class TestAnomalyDetectionLogic:
         high_prob_scores = self.detector.predict_proba(high_prob_sequences)
         low_prob_scores = self.detector.predict_proba(low_prob_sequences)
 
-        print(f"      High probability sequences:")
+        print("      High probability sequences:")
         for i, score in enumerate(high_prob_scores):
             print(f"        Sequence {i}: anomaly score = {score:.6f}")
 
-        print(f"      Low probability sequences:")
+        print("      Low probability sequences:")
         for i, score in enumerate(low_prob_scores):
             print(f"        Sequence {i}: anomaly score = {score:.6f}")
 

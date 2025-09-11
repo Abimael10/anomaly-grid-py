@@ -6,10 +6,8 @@ This test validates that the anomaly detection library correctly implements
 sequence analysis principles and handles various sequence patterns.
 """
 
-import numpy as np
-import pytest
-from typing import List, Dict, Tuple
 
+import numpy as np
 from anomaly_grid_py import AnomalyDetector, calculate_sequence_stats
 
 

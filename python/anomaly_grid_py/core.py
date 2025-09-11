@@ -3,9 +3,11 @@ High-performance anomaly detection with minimal dependencies.
 Only requires numpy for array operations.
 """
 
+from typing import Any, Dict, List, Union
+
 import numpy as np
-from typing import Union, List, Tuple, Dict, Any, Optional
-from . import _core
+
+from . import _core  # type: ignore
 
 
 class AnomalyDetector:
@@ -204,7 +206,7 @@ class BaseEstimator:
         """Get parameter names from __init__ signature."""
         import inspect
 
-        signature = inspect.signature(self.__init__)
+        signature = inspect.signature(self.__init__)  # type: ignore
         return [
             p.name
             for p in signature.parameters.values()
@@ -213,7 +215,11 @@ class BaseEstimator:
 
 
 # Extend AnomalyDetector with minimal estimator interface
-class AnomalyDetector(AnomalyDetector, BaseEstimator):
+class AnomalyDetectorWithEstimator(AnomalyDetector, BaseEstimator):
     """High-performance detector with minimal estimator interface."""
 
     pass
+
+
+# Re-export the enhanced class as AnomalyDetector
+AnomalyDetector = AnomalyDetectorWithEstimator  # type: ignore

@@ -6,9 +6,6 @@ This test validates that the anomaly detection library correctly implements
 fundamental probability theory principles and axioms.
 """
 
-import numpy as np
-import pytest
-from typing import List, Dict, Tuple
 
 from anomaly_grid_py import AnomalyDetector
 

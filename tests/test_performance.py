@@ -1,9 +1,9 @@
 """Performance tests for the AnomalyDetector class."""
 
 import time
-import numpy as np
 
 import anomaly_grid_py
+import numpy as np
 
 
 class TestPerformance:
@@ -12,7 +12,7 @@ class TestPerformance:
     def test_training_performance(self):
         """Test training performance."""
         detector = anomaly_grid_py.AnomalyDetector(max_order=3)
-        
+
         # Create sequences for training (new API expects list of sequences)
         training_sequences = []
         for i in range(1000):  # 1000 sequences
@@ -29,7 +29,7 @@ class TestPerformance:
     def test_detection_performance(self):
         """Test detection performance."""
         detector = anomaly_grid_py.AnomalyDetector(max_order=3)
-        
+
         # Train with sequences
         training_sequences = [["A", "B", "C"]] * 100
         detector.fit(training_sequences)
@@ -62,7 +62,7 @@ class TestPerformance:
             # Create varied sequences
             seq = [f"event_{i % 100}", f"event_{(i+1) % 100}", f"event_{(i+2) % 100}"]
             large_sequences.append(seq)
-        
+
         detector.fit(large_sequences)
 
         # Check metrics
@@ -79,7 +79,7 @@ class TestPerformance:
 
         for size in sizes:
             detector = anomaly_grid_py.AnomalyDetector(max_order=3)
-            
+
             # Create sequences of the specified size
             sequences = []
             for i in range(size):
@@ -98,7 +98,7 @@ class TestPerformance:
     def test_prediction_scalability(self):
         """Test prediction scalability with increasing test sizes."""
         detector = anomaly_grid_py.AnomalyDetector(max_order=3)
-        
+
         # Train once
         training_sequences = [["A", "B", "C"]] * 100
         detector.fit(training_sequences)
@@ -124,7 +124,9 @@ class TestPerformance:
 
         # Prediction time should scale reasonably
         assert all(t < 1.0 for t in times)  # Should be under 1 second
-        print(f"Prediction times for sizes {test_sizes}: {[f'{t:.4f}s' for t in times]}")
+        print(
+            f"Prediction times for sizes {test_sizes}: {[f'{t:.4f}s' for t in times]}"
+        )
 
     def test_large_vocabulary(self):
         """Test performance with large vocabulary."""
@@ -143,7 +145,7 @@ class TestPerformance:
 
         # Test prediction with new vocabulary
         test_sequences = [[f"word_{vocab_size + 1}", f"word_{vocab_size + 2}"]]
-        
+
         start_time = time.time()
         scores = detector.predict_proba(test_sequences)
         prediction_time = time.time() - start_time
@@ -152,5 +154,7 @@ class TestPerformance:
         assert len(scores) == 1
         assert training_time < 2.0
         assert prediction_time < 0.1
-        
-        print(f"Large vocabulary: training={training_time:.4f}s, prediction={prediction_time:.4f}s")
+
+        print(
+            f"Large vocabulary: training={training_time:.4f}s, prediction={prediction_time:.4f}s"
+        )

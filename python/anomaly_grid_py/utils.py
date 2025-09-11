@@ -3,12 +3,15 @@ Lightweight utilities with no external dependencies.
 Custom implementations of common operations.
 """
 
+from typing import Any, Dict, List, Tuple
+
 import numpy as np
-from typing import List, Tuple, Iterator, Any, Dict
 
 
 def train_test_split(
-    sequences: List[List[str]], test_size: float = 0.2, random_state: int = None
+    sequences: List[List[str]],
+    test_size: float = 0.2,
+    random_state: int = None,  # type: ignore
 ) -> Tuple[List[List[str]], List[List[str]]]:
     """
     Lightweight train/test split without sklearn dependency.
@@ -131,8 +134,7 @@ def roc_auc_score(y_true: np.ndarray, y_scores: np.ndarray) -> float:
     fpr = fp / n_neg
 
     # Calculate AUC using trapezoidal rule
-    auc = np.trapz(tpr, fpr)
-    return abs(auc)  # Ensure positive
+    return float(abs(np.trapz(tpr, fpr)))  # type: ignore
 
 
 def generate_sequences(
@@ -276,8 +278,9 @@ def memory_usage() -> float:
         Current memory usage in megabytes.
     """
     try:
-        import psutil
         import os
+
+        import psutil
 
         process = psutil.Process(os.getpid())
         return process.memory_info().rss / 1024 / 1024

@@ -1,9 +1,8 @@
 """Edge case tests for the AnomalyDetector class."""
 
-import pytest
-import numpy as np
-
 import anomaly_grid_py
+import numpy as np
+import pytest
 
 
 class TestEdgeCases:
@@ -45,7 +44,7 @@ class TestEdgeCases:
         # Train with sufficient data
         training_data = [["A", "B", "C"] * 10] * 5
         detector.fit(training_data)
-        
+
         # Should work without issues
         results = detector.predict_proba([["A", "B", "C"]])
         assert isinstance(results, np.ndarray)
@@ -54,7 +53,7 @@ class TestEdgeCases:
         """Test with zero max_order."""
         # The library allows creating detector with max_order=0 but fails on fit
         detector = anomaly_grid_py.AnomalyDetector(max_order=0)
-        
+
         # Should fail when trying to fit
         with pytest.raises(RuntimeError, match="max_order must be greater than 0"):
             detector.fit([["A", "B"], ["A", "B"]])
@@ -81,7 +80,7 @@ class TestEdgeCases:
         # Test valid thresholds
         results_valid = detector.predict([["A", "B"]], threshold=0.5)
         assert isinstance(results_valid, np.ndarray)
-        
+
         # Test NaN threshold - this might still raise an error
         try:
             detector.predict([["A", "B"]], threshold=float("nan"))
@@ -119,7 +118,7 @@ class TestEdgeCases:
         unique_sequences = []
         for i in range(100):
             unique_sequences.append([f"event_{i}", f"event_{i+1}"])
-        
+
         detector.fit(unique_sequences)
 
         # Should handle gracefully
@@ -143,14 +142,14 @@ class TestEdgeCases:
 
         # First training
         detector.fit([["A", "B"], ["A", "B"]])
-        
+
         # Test that we can predict after first training
         results1 = detector.predict_proba([["A", "B"]])
         assert isinstance(results1, np.ndarray)
 
         # Second training (should replace previous training)
         detector.fit([["C", "D"], ["C", "D"]])
-        
+
         # Should still work
         results2 = detector.predict_proba([["C", "D"]])
         assert isinstance(results2, np.ndarray)
@@ -183,15 +182,12 @@ class TestEdgeCases:
             ["A", "B"],
             ["C", "D", "E"],
             ["F", "G", "H", "I"],
-            ["J", "K"]
+            ["J", "K"],
         ]
         detector.fit(mixed_sequences)
 
         # Test with mixed length sequences
-        test_sequences = [
-            ["A", "B"],
-            ["X", "Y", "Z"]
-        ]
+        test_sequences = [["A", "B"], ["X", "Y", "Z"]]
         results = detector.predict_proba(test_sequences)
         assert isinstance(results, np.ndarray)
         assert len(results) == 2

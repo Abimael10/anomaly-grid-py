@@ -155,6 +155,7 @@ jobs:
         args: --release --out dist --find-interpreter
         sccache: 'true'
         manylinux: auto
+        skip: pp311  # Skip PyPy 3.11 due to PyO3 0.21.2 compatibility
       env:
         PYO3_USE_ABI3_FORWARD_COMPATIBILITY: 1
 

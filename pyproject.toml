@@ -67,5 +67,15 @@ ignore = [
     "T201",  # Print statements (used in examples)
     "ANN201",  # Missing return type annotation
     "PLR2004",  # Magic value comparisons
+    "UP006", "UP007", "UP037", "UP045",  # Type annotation modernization (requires Python 3.10+)
+    "F541",  # f-string without placeholders (acceptable for consistency)
+    "F841",  # Unused variables in tests (acceptable for clarity)
+    "E501",  # Line too long (handled by Black)
 ]
+
+[tool.mypy]
+ignore_missing_imports = true
+no_implicit_optional = false
+warn_return_any = false
+warn_unused_ignores = false
 

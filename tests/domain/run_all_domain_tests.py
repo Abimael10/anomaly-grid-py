@@ -7,10 +7,10 @@ and logical correctness of the anomaly-grid-py library across multiple
 domains of knowledge.
 """
 
-import sys
 import os
+import sys
 import time
-from typing import Dict, List, Tuple
+from typing import Dict
 
 # Add parent directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "python"))
@@ -156,20 +156,20 @@ class DomainValidationSuite:
         print("🏆 COMPREHENSIVE DOMAIN VALIDATION SUMMARY")
         print("=" * 70)
 
-        print(f"\n📊 OVERALL RESULTS:")
+        print("\n📊 OVERALL RESULTS:")
         print(f"   • Total Domains Tested: {total_domains}")
         print(f"   • Domains Passed: {passed_domains}")
         print(f"   • Domains Failed: {total_domains - passed_domains}")
         print(f"   • Success Rate: {passed_domains/total_domains*100:.1f}%")
         print(f"   • Total Execution Time: {elapsed_time:.2f} seconds")
 
-        print(f"\n📋 DETAILED RESULTS:")
+        print("\n📋 DETAILED RESULTS:")
         for domain_name, success in self.results.items():
             status = "✅ PASSED" if success else "❌ FAILED"
             print(f"   • {domain_name}: {status}")
 
         # Provide interpretation
-        print(f"\n🔍 INTERPRETATION:")
+        print("\n🔍 INTERPRETATION:")
         if passed_domains == total_domains:
             print("   🎉 EXCELLENT: All domains passed!")
             print(
@@ -190,7 +190,7 @@ class DomainValidationSuite:
             print("   🛠️  Major revisions needed before production use")
 
         # Provide recommendations
-        print(f"\n💡 RECOMMENDATIONS:")
+        print("\n💡 RECOMMENDATIONS:")
 
         failed_domains = [name for name, success in self.results.items() if not success]
 

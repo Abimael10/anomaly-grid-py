@@ -6,10 +6,8 @@ This test validates that the anomaly detection library correctly implements
 fundamental Markov chain mathematical properties and principles.
 """
 
-import numpy as np
-import pytest
-from typing import List, Dict, Tuple
 
+import numpy as np
 from anomaly_grid_py import AnomalyDetector
 
 
@@ -84,7 +82,7 @@ class TestMarkovChainMathematics:
         if markov_violation >= markov_tolerance:
             print(f"    ⚠️  Markov property violation detected: {markov_violation:.6f}")
             print(
-                f"    This is expected with higher max_order values for practical anomaly detection"
+                "    This is expected with higher max_order values for practical anomaly detection"
             )
         else:
             print(
@@ -157,11 +155,11 @@ class TestMarkovChainMathematics:
 
         scores = self.detector.predict_proba(sequences)
 
-        print(f"    Sequence: A -> B")
+        print("    Sequence: A -> B")
         print(f"    P(B|A) = {1.0 - scores[0]:.6f}")
-        print(f"    Sequence: B -> C")
+        print("    Sequence: B -> C")
         print(f"    P(C|B) = {1.0 - scores[1]:.6f}")
-        print(f"    Sequence: A -> B -> C")
+        print("    Sequence: A -> B -> C")
         print(f"    P(A->B->C) = {1.0 - scores[2]:.6f}")
 
         # The Chapman-Kolmogorov equation suggests relationships between these probabilities
@@ -259,10 +257,12 @@ class TestMarkovChainMathematics:
             assert (
                 score < 0.5
             ), f"Long trained pattern {i+1} has very high anomaly score: {score:.6f}"
-            
+
         # At least some patterns should have low scores
         low_score_count = sum(1 for score in scores if score < 0.1)
-        assert low_score_count >= 1, "At least one pattern should have low anomaly score"
+        assert (
+            low_score_count >= 1
+        ), "At least one pattern should have low anomaly score"
 
         print("    ✅ Ergodicity and convergence validated")
 
@@ -294,18 +294,22 @@ class TestMarkovChainMathematics:
         assert (
             scores[1] < scores[2]
         ), "Exact training pattern should have lower anomaly score than unseen pattern"
-        
+
         # Note: The relationship between repeated elements and unseen patterns
         # can vary depending on training data distribution and context
         # We'll just verify that all scores are reasonable
         for i, score in enumerate(scores):
             assert 0.0 <= score <= 1.0, f"Score {i} out of bounds: {score}"
-            
-        print(f"    Score relationships: training={scores[1]:.6f} < unseen={scores[2]:.6f}")
+
+        print(
+            f"    Score relationships: training={scores[1]:.6f} < unseen={scores[2]:.6f}"
+        )
         print(f"    Repeated element score: {scores[0]:.6f}")
-        
+
         # The exact training pattern should have the lowest score
-        assert scores[1] == min(scores), "Exact training pattern should have lowest score"
+        assert scores[1] == min(
+            scores
+        ), "Exact training pattern should have lowest score"
 
         # Test consistency with different thresholds
         thresholds = [0.01, 0.1, 0.5, 0.9]

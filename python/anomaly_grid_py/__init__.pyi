@@ -1,13 +1,14 @@
 """Type stubs for anomaly_grid_py."""
 
-from typing import List, Dict, Any, Optional, Union, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 import numpy as np
 
 class AnomalyDetector:
     """High-performance anomaly detector for sequential data."""
 
     def __init__(self, max_order: int = ...) -> None: ...
-    def fit(self, X: Union[List[List[str]], np.ndarray]) -> "AnomalyDetector":
+    def fit(self, X: Union[List[List[str]], np.ndarray]) -> AnomalyDetector:
         """Fit detector on training sequences."""
         ...
 
@@ -35,7 +36,7 @@ class AnomalyDetector:
         """Get estimator parameters."""
         ...
 
-    def set_params(self, **params) -> "AnomalyDetector":
+    def set_params(self, **params) -> AnomalyDetector:
         """Set estimator parameters."""
         ...
 
@@ -84,7 +85,7 @@ class PerformanceTimer:
     """Lightweight performance timing utility."""
 
     def __init__(self) -> None: ...
-    def __enter__(self) -> "PerformanceTimer": ...
+    def __enter__(self) -> PerformanceTimer: ...
     def __exit__(self, *args) -> None: ...
     def time_operation(self, name: str, func, *args, **kwargs) -> Any: ...
     def get_times(self) -> Dict[str, float]: ...
