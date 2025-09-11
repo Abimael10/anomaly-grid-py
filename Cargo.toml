@@ -1,12 +1,17 @@
 [package]
 name = "anomaly-grid-py"
-version = "0.1.0"
+version = "0.3.0"
 edition = "2021"
 
 [lib]
-name = "anomaly_grid"
+name = "_core"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.20", features = ["extension-module", "abi3-py38"] }
-anomaly-grid = "0.2.2"
+# PyO3 for Python bindings - essential for performance
+pyo3 = { version = "0.20", features = ["extension-module"] }
+anomaly-grid = "0.3.0"
+# NumPy integration - essential for zero-copy operations
+numpy = "0.20"
+
+# NO OTHER DEPENDENCIES - everything else custom implemented

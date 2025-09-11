@@ -48,6 +48,23 @@ htmlcov/
 # Maturin
 *.whl
 
+# Development and temporary files
+*.tmp
+*.temp
+*_temp.py
+*_debug.py
+*_test.py
+comprehensive_*.py
+demonstrate_*.py
+benchmark.ipynb
+
+# Documentation drafts
+*_DRAFT.md
+*_WIP.md
+
+# Jupyter notebooks (unless specifically needed)
+*.ipynb
+
 # Development scripts (keep essential ones)
 scripts/audit/
 scripts/validation/

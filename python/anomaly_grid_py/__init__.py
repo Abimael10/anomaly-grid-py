@@ -1,9 +1,37 @@
-"""Anomaly Grid Python - Python bindings for the anomaly-grid Rust library.
+"""
+Anomaly Grid: High-performance sequence anomaly detection.
 
-A simple and efficient anomaly detection library for sequential data.
+Minimal dependency implementation focusing on speed and efficiency.
+Only requires numpy for array operations.
 """
 
-from ._core import AnomalyDetector, AnomalyInfo
+from .core import AnomalyDetector
+from .utils import (
+    train_test_split,
+    cross_val_score, 
+    roc_auc_score,
+    precision_recall_curve,
+    generate_sequences,
+    PerformanceTimer,
+    memory_usage,
+    validate_sequences,
+    calculate_sequence_stats
+)
 
-__version__ = "0.1.0"
-__all__ = ["AnomalyDetector", "AnomalyInfo"]
+__version__ = "0.3.0"
+__all__ = [
+    "AnomalyDetector",
+    "train_test_split",
+    "cross_val_score",
+    "roc_auc_score", 
+    "precision_recall_curve",
+    "generate_sequences",
+    "PerformanceTimer",
+    "memory_usage",
+    "validate_sequences",
+    "calculate_sequence_stats"
+]
+
+# Performance-focused configuration
+import numpy as np
+np.seterr(all='raise')  # Catch numerical errors early

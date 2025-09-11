@@ -8,9 +8,9 @@ sys.path.insert(0, os.path.abspath("../python"))
 
 # Project information
 project = "anomaly-grid-py"
-copyright = "2024, Anomaly Grid Team"
-author = "Anomaly Grid Team"
-release = "0.1.0"
+copyright = "2025, Juan Abimael Santos Castillo"
+author = "Juan Abimael Santos Castillo"
+release = "0.3.0"
 
 # Extensions
 extensions = [
