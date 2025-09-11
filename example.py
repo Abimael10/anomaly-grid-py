@@ -9,6 +9,7 @@ the actual value of anomaly detection in real-world scenarios.
 import anomaly_grid_py
 import time
 import random
+import numpy as np
 
 def web_server_log_analysis():
     """Example 1: Web Server Log Analysis"""
@@ -44,42 +45,61 @@ def web_server_log_analysis():
     
     print(f"📚 Training with {len(training_data)} log entries...")
     start_time = time.time()
-    detector.train(training_data)
+    # Convert flat list to list of sequences for the new API
+    sequences = []
+    current_seq = []
+    for item in training_data:
+        current_seq.append(item)
+        if len(current_seq) >= 5:  # Create sequences of length 5
+            sequences.append(current_seq.copy())
+            current_seq = current_seq[1:]  # Sliding window
+    
+    detector.fit(sequences)
     training_time = time.time() - start_time
     print(f"✅ Training completed in {training_time:.4f}s")
     
     # Test normal user behavior
     print("\n🟢 Testing Normal User Session:")
     normal_session = ["GET", "/", "200", "GET", "/login", "200", "POST", "/login", "302", "GET", "/dashboard", "200", "GET", "/profile", "200"]
-    normal_anomalies = detector.detect(normal_session, threshold=0.1)
+    # Convert to sequence format
+    normal_sequences = [normal_session[i:i+5] for i in range(len(normal_session)-4)]
+    normal_scores = detector.predict_proba(normal_sequences)
+    normal_anomalies = sum(1 for score in normal_scores if score > 0.1)
     print(f"   Session: {' → '.join(normal_session[:5])}...")
-    print(f"   Anomalies detected: {len(normal_anomalies)}")
+    print(f"   Anomalies detected: {normal_anomalies}")
     
     # Test suspicious behavior patterns
     print("\n🔴 Testing Suspicious Behaviors:")
     
     # SQL Injection attempt
     sql_injection = ["GET", "/", "200", "GET", "/login", "200", "POST", "/login", "500", "GET", "/admin", "403", "GET", "/admin/users", "403"]
-    sql_anomalies = detector.detect(sql_injection, threshold=0.1)
-    print(f"   SQL Injection Pattern: {len(sql_anomalies)} anomalies detected")
-    for anomaly in sql_anomalies[:2]:
-        print(f"     🚨 Alert: '{anomaly.sequence}' (strength: {anomaly.anomaly_strength:.3f})")
+    sql_sequences = [sql_injection[i:i+5] for i in range(len(sql_injection)-4)]
+    sql_scores = detector.predict_proba(sql_sequences)
+    sql_anomalies = sum(1 for score in sql_scores if score > 0.1)
+    print(f"   SQL Injection Pattern: {sql_anomalies} anomalies detected")
+    if sql_anomalies > 0:
+        max_score = max(sql_scores)
+        print(f"     🚨 Alert: Max anomaly score: {max_score:.3f}")
     
     # Brute force attack
     brute_force = ["POST", "/login", "401"] * 10 + ["GET", "/admin", "403"]
-    brute_anomalies = detector.detect(brute_force, threshold=0.1)
-    print(f"   Brute Force Pattern: {len(brute_anomalies)} anomalies detected")
+    brute_sequences = [brute_force[i:i+5] for i in range(len(brute_force)-4)]
+    brute_scores = detector.predict_proba(brute_sequences)
+    brute_anomalies = sum(1 for score in brute_scores if score > 0.1)
+    print(f"   Brute Force Pattern: {brute_anomalies} anomalies detected")
     
     # Directory traversal
     directory_traversal = ["GET", "/", "200", "GET", "/../etc/passwd", "404", "GET", "/../admin", "404", "GET", "/admin/config", "403"]
-    traversal_anomalies = detector.detect(directory_traversal, threshold=0.1)
-    print(f"   Directory Traversal: {len(traversal_anomalies)} anomalies detected")
+    traversal_sequences = [directory_traversal[i:i+5] for i in range(len(directory_traversal)-4)]
+    traversal_scores = detector.predict_proba(traversal_sequences)
+    traversal_anomalies = sum(1 for score in traversal_scores if score > 0.1)
+    print(f"   Directory Traversal: {traversal_anomalies} anomalies detected")
     
     # Performance metrics
     metrics = detector.get_performance_metrics()
     print(f"\n📊 Performance Metrics:")
     print(f"   Training time: {metrics['training_time_ms']} ms")
-    print(f"   Memory usage: {metrics['estimated_memory_bytes'] / 1024:.1f} KB")
+    print(f"   Memory usage: {metrics['memory_bytes'] / 1024:.1f} KB")
     print(f"   Context patterns: {metrics['context_count']}")
 
 def user_behavior_analysis():
@@ -109,7 +129,16 @@ def user_behavior_analysis():
             training_data.extend(["view_help", "logout"])
     
     print(f"📚 Training with {len(training_data)} user actions...")
-    detector.train(training_data)
+    # Convert to sequences
+    sequences = []
+    current_seq = []
+    for item in training_data:
+        current_seq.append(item)
+        if len(current_seq) >= 4:  # Create sequences of length 4
+            sequences.append(current_seq.copy())
+            current_seq = current_seq[1:]  # Sliding window
+    
+    detector.fit(sequences)
     
     # Test scenarios
     scenarios = {
@@ -122,16 +151,19 @@ def user_behavior_analysis():
     
     print("\n🔍 Analyzing User Behavior Patterns:")
     for scenario_name, actions in scenarios.items():
-        anomalies = detector.detect(actions, threshold=0.1)
-        risk_level = "🟢 LOW" if len(anomalies) <= 1 else "🟡 MEDIUM" if len(anomalies) <= 3 else "🔴 HIGH"
+        # Convert to sequences for analysis
+        action_sequences = [actions[i:i+4] for i in range(len(actions)-3)] if len(actions) >= 4 else [actions]
+        scores = detector.predict_proba(action_sequences)
+        anomalies = sum(1 for score in scores if score > 0.1)
+        risk_level = "🟢 LOW" if anomalies <= 1 else "🟡 MEDIUM" if anomalies <= 3 else "🔴 HIGH"
         
         print(f"\n{risk_level} {scenario_name}:")
         print(f"   Actions: {' → '.join(actions)}")
-        print(f"   Risk Score: {len(anomalies)}/{len(actions)} anomalous actions")
+        print(f"   Risk Score: {anomalies}/{len(action_sequences)} anomalous sequences")
         
-        if anomalies:
-            for i, anomaly in enumerate(anomalies[:2]):
-                print(f"   🚨 Alert {i+1}: '{anomaly.sequence}' (confidence: {anomaly.anomaly_strength:.1%})")
+        if anomalies > 0:
+            max_score = max(scores)
+            print(f"   🚨 Alert: Max anomaly score: {max_score:.1%}")
 
 def iot_sensor_monitoring():
     """Example 3: IoT Sensor Data Monitoring"""
@@ -160,33 +192,52 @@ def iot_sensor_monitoring():
             training_data.extend(pattern)
     
     print(f"📚 Training with {len(training_data)} sensor readings...")
-    detector.train(training_data)
+    # Convert to sequences
+    sequences = []
+    current_seq = []
+    for item in training_data:
+        current_seq.append(item)
+        if len(current_seq) >= 3:  # Create sequences of length 3
+            sequences.append(current_seq.copy())
+            current_seq = current_seq[1:]  # Sliding window
+    
+    detector.fit(sequences)
     
     # Test different scenarios
     print("\n🔍 Monitoring Sensor Anomalies:")
     
     # Normal operation
     normal_readings = ["temp_normal", "humidity_normal", "pressure_normal"] * 3
-    normal_anomalies = detector.detect(normal_readings, threshold=0.1)
-    print(f"🟢 Normal Operation: {len(normal_anomalies)} anomalies in {len(normal_readings)} readings")
+    normal_sequences = [normal_readings[i:i+3] for i in range(len(normal_readings)-2)]
+    normal_scores = detector.predict_proba(normal_sequences)
+    normal_anomalies = sum(1 for score in normal_scores if score > 0.1)
+    print(f"🟢 Normal Operation: {normal_anomalies} anomalies in {len(normal_readings)} readings")
     
     # Equipment malfunction
     malfunction = ["temp_critical", "temp_critical", "humidity_critical", "pressure_critical", "sensor_error"]
-    malfunction_anomalies = detector.detect(malfunction, threshold=0.1)
-    print(f"🔴 Equipment Malfunction: {len(malfunction_anomalies)} anomalies detected")
+    malfunction_sequences = [malfunction[i:i+3] for i in range(len(malfunction)-2)]
+    malfunction_scores = detector.predict_proba(malfunction_sequences)
+    malfunction_anomalies = sum(1 for score in malfunction_scores if score > 0.1)
+    print(f"🔴 Equipment Malfunction: {malfunction_anomalies} anomalies detected")
     
     # Gradual degradation
     degradation = ["temp_normal", "temp_high", "temp_critical", "humidity_normal", "humidity_high", "sensor_drift"]
-    degradation_anomalies = detector.detect(degradation, threshold=0.1)
-    print(f"🟡 Gradual Degradation: {len(degradation_anomalies)} anomalies detected")
+    degradation_sequences = [degradation[i:i+3] for i in range(len(degradation)-2)]
+    degradation_scores = detector.predict_proba(degradation_sequences)
+    degradation_anomalies = sum(1 for score in degradation_scores if score > 0.1)
+    print(f"🟡 Gradual Degradation: {degradation_anomalies} anomalies detected")
     
     # Environmental event
     storm = ["pressure_low", "pressure_critical", "humidity_high", "temp_low", "wind_high", "power_fluctuation"]
-    storm_anomalies = detector.detect(storm, threshold=0.1)
-    print(f"⛈️ Storm Event: {len(storm_anomalies)} anomalies detected")
+    storm_sequences = [storm[i:i+3] for i in range(len(storm)-2)]
+    storm_scores = detector.predict_proba(storm_sequences)
+    storm_anomalies = sum(1 for score in storm_scores if score > 0.1)
+    print(f"⛈️ Storm Event: {storm_anomalies} anomalies detected")
     
-    for anomaly in storm_anomalies[:2]:
-        print(f"   🌪️ Weather Alert: '{anomaly.sequence}' (strength: {anomaly.anomaly_strength:.3f})")
+    if storm_anomalies > 0:
+        max_score = max(storm_scores)
+        max_idx = np.argmax(storm_scores)
+        print(f"   🌪️ Weather Alert: '{storm_sequences[max_idx]}' (strength: {max_score:.3f})")
 
 def network_traffic_analysis():
     """Example 4: Network Traffic Analysis"""
@@ -212,7 +263,16 @@ def network_traffic_analysis():
     
     print(f"📚 Training with {len(training_data)} network events...")
     start_time = time.time()
-    detector.train(training_data)
+    # Convert to sequences
+    sequences = []
+    current_seq = []
+    for item in training_data:
+        current_seq.append(item)
+        if len(current_seq) >= 4:  # Create sequences of length 4
+            sequences.append(current_seq.copy())
+            current_seq = current_seq[1:]  # Sliding window
+    
+    detector.fit(sequences)
     training_time = time.time() - start_time
     print(f"✅ Training completed in {training_time:.4f}s ({len(training_data)/training_time:.0f} events/sec)")
     
@@ -221,29 +281,38 @@ def network_traffic_analysis():
     
     # Port scan detection
     port_scan = ["tcp_syn", "tcp_rst"] * 10 + ["tcp_syn", "tcp_ack", "service_banner"]
-    scan_anomalies = detector.detect(port_scan, threshold=0.1)
-    print(f"🔴 Port Scan: {len(scan_anomalies)} anomalies in {len(port_scan)} packets")
+    scan_sequences = [port_scan[i:i+4] for i in range(len(port_scan)-3)]
+    scan_scores = detector.predict_proba(scan_sequences)
+    scan_anomalies = sum(1 for score in scan_scores if score > 0.1)
+    print(f"🔴 Port Scan: {scan_anomalies} anomalies in {len(port_scan)} packets")
     
     # DDoS attack
     ddos = ["tcp_syn"] * 20 + ["tcp_timeout"] * 5
-    ddos_anomalies = detector.detect(ddos, threshold=0.1)
-    print(f"🔴 DDoS Attack: {len(ddos_anomalies)} anomalies detected")
+    ddos_sequences = [ddos[i:i+4] for i in range(len(ddos)-3)]
+    ddos_scores = detector.predict_proba(ddos_sequences)
+    ddos_anomalies = sum(1 for score in ddos_scores if score > 0.1)
+    print(f"🔴 DDoS Attack: {ddos_anomalies} anomalies detected")
     
     # Data exfiltration
     exfiltration = ["tcp_syn", "tcp_ack", "large_upload", "large_upload", "large_upload", "tcp_fin"]
-    exfil_anomalies = detector.detect(exfiltration, threshold=0.1)
-    print(f"🟡 Data Exfiltration: {len(exfil_anomalies)} anomalies detected")
+    exfil_sequences = [exfiltration[i:i+4] for i in range(len(exfiltration)-3)]
+    exfil_scores = detector.predict_proba(exfil_sequences)
+    exfil_anomalies = sum(1 for score in exfil_scores if score > 0.1)
+    print(f"🟡 Data Exfiltration: {exfil_anomalies} anomalies detected")
     
     # Normal business traffic
     normal_business = ["tcp_syn", "tcp_ack", "https_request", "https_response", "tcp_fin"]
-    normal_anomalies = detector.detect(normal_business, threshold=0.1)
-    print(f"🟢 Normal Business: {len(normal_anomalies)} anomalies detected")
+    normal_sequences = [normal_business[i:i+4] for i in range(len(normal_business)-3)]
+    normal_scores = detector.predict_proba(normal_sequences)
+    normal_anomalies = sum(1 for score in normal_scores if score > 0.1)
+    print(f"🟢 Normal Business: {normal_anomalies} anomalies detected")
     
     # Show detailed analysis for the most suspicious activity
-    if ddos_anomalies:
+    if ddos_anomalies > 0:
         print(f"\n🚨 DDoS Attack Analysis:")
-        for i, anomaly in enumerate(ddos_anomalies[:3]):
-            print(f"   Alert {i+1}: '{anomaly.sequence}' (threat level: {anomaly.anomaly_strength:.1%})")
+        high_scores = [(i, score) for i, score in enumerate(ddos_scores) if score > 0.1]
+        for i, (seq_idx, score) in enumerate(high_scores[:3]):
+            print(f"   Alert {i+1}: '{ddos_sequences[seq_idx]}' (threat level: {score:.1%})")
 
 def performance_benchmark():
     """Performance benchmark with realistic data sizes"""
@@ -264,18 +333,29 @@ def performance_benchmark():
         
         # Measure training performance
         start_time = time.perf_counter()
-        detector.train(events)
+        # Convert to sequences for training
+        sequences = []
+        for i in range(len(events) - 2):
+            sequences.append(events[i:i+3])
+        
+        detector.fit(sequences)
         training_time = time.perf_counter() - start_time
         
         # Measure detection performance
         test_events = [random.choice(patterns) for _ in range(100)]
         start_time = time.perf_counter()
-        results = detector.detect(test_events, threshold=0.1)
+        # Convert test events to sequences
+        test_sequences = []
+        for i in range(len(test_events) - 2):
+            test_sequences.append(test_events[i:i+3])
+        
+        scores = detector.predict_proba(test_sequences)
+        results = sum(1 for score in scores if score > 0.1)
         detection_time = time.perf_counter() - start_time
         
         # Get memory usage
         metrics = detector.get_performance_metrics()
-        memory_kb = metrics['estimated_memory_bytes'] / 1024
+        memory_kb = metrics['memory_bytes'] / 1024
         
         print(f"📊 {size:5d} events: train={training_time:.4f}s ({size/training_time:6.0f} evt/s), "
               f"detect={detection_time:.4f}s, memory={memory_kb:.1f}KB")

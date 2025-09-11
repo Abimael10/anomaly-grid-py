@@ -1,7 +1,8 @@
 use pyo3::prelude::*;
+use pyo3::types::PyModule;
 
-mod detector;
 mod arrays;
+mod detector;
 mod errors;
 
 use detector::PyAnomalyDetector;

@@ -61,7 +61,11 @@ jobs:
       run: |
         # Clean old wheels to prevent version conflicts
         rm -rf target/wheels/
+        # Set PyO3 compatibility flag for newer Python versions
+        export PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
         maturin build --release
+      env:
+        PYO3_USE_ABI3_FORWARD_COMPATIBILITY: 1
     
     - name: Install built wheel (Windows)
       if: runner.os == 'Windows'
@@ -156,6 +160,8 @@ jobs:
         args: --release --out dist --find-interpreter
         sccache: 'true'
         manylinux: auto
+      env:
+        PYO3_USE_ABI3_FORWARD_COMPATIBILITY: 1
 
     - name: Upload wheels
       uses: actions/upload-artifact@v4
