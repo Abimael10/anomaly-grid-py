@@ -59,9 +59,10 @@ jobs:
 
     - name: Build and install package in development mode
       run: |
-        # Set PyO3 compatibility flag for newer Python versions
+        # Use pip install -e . which works without virtual environment
+        # This is equivalent to maturin develop but more CI-friendly
         export PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
-        maturin develop
+        pip install -e .
       env:
         PYO3_USE_ABI3_FORWARD_COMPATIBILITY: 1
 
