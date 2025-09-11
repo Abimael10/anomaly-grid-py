@@ -77,9 +77,8 @@ jobs:
 
     - name: Run tests
       run: |
-        # Run tests from a different directory to ensure we're using installed package
-        cd /tmp
-        python -m pytest $GITHUB_WORKSPACE/tests/ -v
+        # Run tests to ensure the installed package works correctly
+        python -m pytest tests/ -v
 
   lint:
     name: Lint and Format Check
