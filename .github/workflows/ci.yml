@@ -61,7 +61,6 @@ jobs:
       run: |
         # Use pip install -e . which works without virtual environment
         # This is equivalent to maturin develop but more CI-friendly
-        export PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
         pip install -e .
       env:
         PYO3_USE_ABI3_FORWARD_COMPATIBILITY: 1
