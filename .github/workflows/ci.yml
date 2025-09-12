@@ -228,8 +228,8 @@ jobs:
 
     - name: Install wheel and benchmark dependencies
       run: |
-        # Install only the latest version wheel
-        pip install dist/*-0.3.0-*.whl || pip install dist/*.whl
+        # Install wheel - pip will automatically select the compatible one
+        pip install --find-links dist anomaly-grid-py==0.3.0
         pip install pytest pytest-benchmark
 
     - name: Run performance benchmarks
