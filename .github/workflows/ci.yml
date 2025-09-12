@@ -188,8 +188,8 @@ jobs:
         python -m venv test_env
         source test_env/bin/activate
         
-        # Install wheel (only latest version)
-        pip install dist/*-0.3.0-*.whl || pip install dist/*.whl
+        # Install wheel - pip will automatically select the compatible one
+        pip install --find-links dist anomaly-grid-py==0.3.0
         
         # Test basic functionality
         python -c "
