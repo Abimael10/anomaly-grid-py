@@ -23,11 +23,12 @@ jobs:
       uses: PyO3/maturin-action@v1
       with:
         target: ${{ matrix.target }}
-        args: --release --out dist --interpreter python3.8 python3.9 python3.10 python3.11 python3.12 python3.13 pypy3.10
+        args: --release --out dist --find-interpreter
         sccache: 'true'
         manylinux: auto
       env:
         PYO3_USE_ABI3_FORWARD_COMPATIBILITY: 1
+      continue-on-error: true
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
@@ -49,10 +50,11 @@ jobs:
       uses: PyO3/maturin-action@v1
       with:
         target: ${{ matrix.target }}
-        args: --release --out dist --interpreter python3.8 python3.9 python3.10 python3.11 python3.12 python3.13 pypy3.10
+        args: --release --out dist --find-interpreter
         sccache: 'true'
       env:
         PYO3_USE_ABI3_FORWARD_COMPATIBILITY: 1
+      continue-on-error: true
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
@@ -73,10 +75,11 @@ jobs:
       uses: PyO3/maturin-action@v1
       with:
         target: ${{ matrix.target }}
-        args: --release --out dist --interpreter python3.8 python3.9 python3.10 python3.11 python3.12 python3.13 pypy3.10
+        args: --release --out dist --find-interpreter
         sccache: 'true'
       env:
         PYO3_USE_ABI3_FORWARD_COMPATIBILITY: 1
+      continue-on-error: true
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
