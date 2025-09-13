@@ -180,18 +180,5 @@ def test_error_handling():
         assert "at least 2 elements" in str(e)
 
 
-def test_padding_functionality():
-    """Test predict_proba_with_padding method"""
-    detector = anomaly_grid_py.AnomalyDetector(max_order=2)
-
-    # Train with normal sequences
-    training_data = [["A", "B"], ["B", "C"]] * 5
-    detector.fit(training_data)
-
-    # Test with short sequences that need padding
-    test_sequences = [["A"], ["B"], ["A", "B"]]  # Mix of short and normal
-    scores = detector.predict_proba_with_padding(test_sequences)
-
-    assert isinstance(scores, np.ndarray)
-    assert len(scores) == 3
-    assert all(0 <= score <= 1 for score in scores)
+# Padding functionality removed in clean implementation
+# Core detector handles sequences directly without padding

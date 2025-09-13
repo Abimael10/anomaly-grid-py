@@ -1,91 +1,141 @@
 """Type stubs for anomaly_grid_py."""
 
 from typing import Any, Dict, List, Optional, Tuple, Union
-
 import numpy as np
 
 class AnomalyDetector:
-    """High-performance anomaly detector for sequential data."""
-
-    def __init__(self, max_order: int = ...) -> None: ...
-    def fit(self, X: Union[List[List[str]], np.ndarray]) -> AnomalyDetector:
-        """Fit detector on training sequences."""
+    """Simple anomaly detector for sequential data."""
+    
+    def __init__(self, max_order: int = 3) -> None:
+        """
+        Initialize anomaly detector.
+        
+        Parameters
+        ----------
+        max_order : int, default=3
+            Maximum order of the Markov model.
+        """
         ...
 
-    def predict_proba(self, X: Union[List[List[str]], np.ndarray]) -> np.ndarray:
-        """Predict anomaly scores."""
+    def fit(self, X: List[List[str]]) -> "AnomalyDetector":
+        """
+        Train detector on normal sequences.
+        
+        Parameters
+        ----------
+        X : List[List[str]]
+            Training sequences (normal data only).
+            
+        Returns
+        -------
+        self : AnomalyDetector
+            Returns self for method chaining.
+        """
         ...
 
-    def predict(
-        self, X: Union[List[List[str]], np.ndarray], threshold: float = ...
-    ) -> np.ndarray:
-        """Predict anomalies."""
+    def predict_proba(self, X: List[List[str]]) -> np.ndarray:
+        """
+        Predict anomaly probabilities.
+        
+        Parameters
+        ----------
+        X : List[List[str]]
+            Sequences to score.
+            
+        Returns
+        -------
+        scores : np.ndarray
+            Anomaly probability scores [0, 1].
+            Higher scores indicate more anomalous sequences.
+        """
         ...
 
-    def detect_anomalies(
-        self, X: Union[List[List[str]], np.ndarray], threshold: float = ...
-    ) -> List[Any]:
-        """Detect anomalies with detailed information."""
+    def predict(self, X: List[List[str]], threshold: float = 0.5) -> np.ndarray:
+        """
+        Predict binary anomaly labels.
+        
+        Parameters
+        ----------
+        X : List[List[str]]
+            Sequences to classify.
+        threshold : float, default=0.5
+            Anomaly threshold.
+            
+        Returns
+        -------
+        predictions : np.ndarray
+            Boolean array where True indicates anomalous sequences.
+        """
         ...
 
     def get_performance_metrics(self) -> Dict[str, Any]:
-        """Get performance metrics."""
+        """
+        Get performance metrics.
+        
+        Returns
+        -------
+        metrics : Dict[str, Any]
+            Performance metrics from the core detector.
+        """
         ...
 
-    def get_params(self, deep: bool = ...) -> Dict[str, Any]:
-        """Get estimator parameters."""
+    def get_params(self, deep: bool = True) -> Dict[str, Any]:
+        """Get estimator parameters (scikit-learn compatibility)."""
         ...
 
-    def set_params(self, **params) -> AnomalyDetector:
-        """Set estimator parameters."""
-        ...
-
-    @property
-    def is_fitted(self) -> bool:
-        """Check if detector is fitted."""
-        ...
-
-    @property
-    def max_order(self) -> int:
-        """Get maximum order."""
+    def set_params(self, **params) -> "AnomalyDetector":
+        """Set estimator parameters (scikit-learn compatibility)."""
         ...
 
 # Utility functions
 def train_test_split(
     sequences: List[List[str]],
-    test_size: float = ...,
-    random_state: Optional[int] = ...,
-) -> Tuple[List[List[str]], List[List[str]]]: ...
-def cross_val_score(
-    estimator: AnomalyDetector,
-    X: List[List[str]],
-    y: List[int],
-    cv: int = ...,
-    scoring: str = ...,
-) -> np.ndarray: ...
-def roc_auc_score(
-    y_true: Union[List[int], np.ndarray], y_scores: Union[List[float], np.ndarray]
-) -> float: ...
+    test_size: float = 0.2,
+    random_state: Optional[int] = None,
+) -> Tuple[List[List[str]], List[List[str]]]:
+    """Split sequences into training and test sets."""
+    ...
+
 def precision_recall_curve(
-    y_true: Union[List[int], np.ndarray], y_scores: Union[List[float], np.ndarray]
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]: ...
+    y_true: Union[List[int], np.ndarray], 
+    y_scores: Union[List[float], np.ndarray]
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Calculate precision-recall curve for anomaly detection evaluation."""
+    ...
+
 def generate_sequences(
     n_sequences: int,
     seq_length: int,
     alphabet: List[str],
-    anomaly_rate: float = ...,
-    pattern_type: str = ...,
-    random_state: Optional[int] = ...,
-) -> Tuple[List[List[str]], List[int]]: ...
-def memory_usage() -> float: ...
-def validate_sequences(sequences: List[List[str]], min_length: int = ...) -> None: ...
-def calculate_sequence_stats(sequences: List[List[str]]) -> Dict[str, Any]: ...
+    anomaly_rate: float = 0.1,
+    pattern_type: str = "random",
+    random_state: Optional[int] = None,
+) -> Tuple[List[List[str]], List[int]]:
+    """Generate synthetic sequences for testing."""
+    ...
+
+def validate_sequences(
+    sequences: List[List[str]], 
+    min_length: int = 1
+) -> None:
+    """Validate sequence format and content."""
+    ...
+
+def calculate_sequence_stats(
+    sequences: List[List[str]]
+) -> Dict[str, Any]:
+    """Calculate statistics for sequences."""
+    ...
+
+def memory_usage() -> float:
+    """Get current memory usage in MB."""
+    ...
 
 class PerformanceTimer:
     """Lightweight performance timing utility."""
 
     def __init__(self) -> None: ...
-    def __enter__(self) -> PerformanceTimer: ...
+    def __enter__(self) -> "PerformanceTimer": ...
     def __exit__(self, *args) -> None: ...
     def time_operation(self, name: str, func, *args, **kwargs) -> Any: ...
     def get_times(self) -> Dict[str, float]: ...

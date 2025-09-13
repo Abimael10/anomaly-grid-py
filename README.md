@@ -1,13 +1,11 @@
-# 🔍 Anomaly Grid Python
+# Anomaly Grid Python
 
 [![PyPI version](https://badge.fury.io/py/anomaly-grid-py.svg)](https://badge.fury.io/py/anomaly-grid-py)
 [![Python versions](https://img.shields.io/pypi/pyversions/anomaly-grid-py.svg)](https://pypi.org/project/anomaly-grid-py/)
-[![Downloads](https://img.shields.io/pypi/dm/anomaly-grid-py.svg)](https://pypi.org/project/anomaly-grid-py/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/abimael10/anomaly-grid-py/workflows/CI/badge.svg)](https://github.com/abimael10/anomaly-grid-py/actions)
-[![Rust](https://img.shields.io/badge/rust-stable-brightgreen.svg)](https://www.rust-lang.org/)
+[![Downloads](https://img.shields.io/pypi/dm/anomaly-grid-py.svg)](https://pypi.org/project/anomaly-grid-py/)
 
-High-performance sequence anomaly detection using Markov models. Minimal dependencies, scikit-learn style API.
+Sequence anomaly detection using Markov models.
 
 ## Installation
 
@@ -15,60 +13,71 @@ High-performance sequence anomaly detection using Markov models. Minimal depende
 pip install anomaly-grid-py
 ```
 
-## Quick Start
+## Usage
 
 ```python
-from anomaly_grid_py import AnomalyDetector
+import anomaly_grid_py
 
 # Create detector
-detector = AnomalyDetector(max_order=3)
+detector = anomaly_grid_py.AnomalyDetector(max_order=3)
 
 # Train on normal sequences
-normal_patterns = [
-    ['LOGIN', 'BALANCE', 'LOGOUT'],
-    ['LOGIN', 'WITHDRAW', 'LOGOUT'],
-    ['LOGIN', 'TRANSFER', 'LOGOUT']
-] * 100
+normal_sequences = [
+    ['A', 'B', 'C'],
+    ['A', 'B', 'D'],
+    ['A', 'C', 'D']
+] * 50  # Need enough data for training
 
-detector.fit(normal_patterns)
+detector.fit(normal_sequences)
 
-# Detect anomalies
+# Get anomaly scores
 test_sequences = [
-    ['LOGIN', 'BALANCE', 'LOGOUT'],      # Normal
-    ['HACK', 'EXPLOIT', 'STEAL'],        # Anomalous
+    ['A', 'B', 'C'],  # Normal
+    ['X', 'Y', 'Z']   # Anomalous
 ]
 
-# Get anomaly scores (0-1, higher = more anomalous)
 scores = detector.predict_proba(test_sequences)
-print(f"Scores: {scores}")
+print(scores)  # [0.26, 0.62] - higher = more anomalous
 
-# Get binary predictions
-anomalies = detector.predict(test_sequences, threshold=0.1)
-print(f"Anomalies: {anomalies}")
+# Binary predictions
+anomalies = detector.predict(test_sequences, threshold=0.5)
+print(anomalies)  # [False, True]
 ```
 
-## API Reference
+## API
 
-### AnomalyDetector(max_order=3)
+```python
+# Create detector
+AnomalyDetector(max_order=3)
 
-**Methods:**
-- `fit(X)` - Train on list of sequences
-- `predict_proba(X)` - Get anomaly scores (0-1)
-- `predict(X, threshold=0.1)` - Get binary predictions
-- `get_performance_metrics()` - Get training metrics
+# Train on normal sequences
+detector.fit(sequences)
 
-**Parameters:**
-- `X`: List of sequences, each sequence is a list of strings
-- `threshold`: Detection threshold (0-1)
+# Get anomaly scores [0,1]
+detector.predict_proba(sequences)
 
-## Examples
+# Get binary predictions
+detector.predict(sequences, threshold=0.5)
 
-See [`example.py`](example.py) for complete examples:
+# Get model info
+detector.get_performance_metrics()
+```
+
+## Requirements
+
+- Python 3.8+
+- NumPy
+
+## Development
 
 ```bash
-python example.py
+git clone https://github.com/abimael10/anomaly-grid-py.git
+cd anomaly-grid-py
+./setup.sh
+source venv/bin/activate
+pytest tests/
 ```
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT

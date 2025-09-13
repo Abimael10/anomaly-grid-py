@@ -96,45 +96,8 @@ def cross_val_score(
     return np.array(scores)
 
 
-def roc_auc_score(y_true: np.ndarray, y_scores: np.ndarray) -> float:
-    """
-    Lightweight ROC-AUC calculation without sklearn dependency.
-
-    Parameters
-    ----------
-    y_true : numpy.ndarray
-        True binary labels.
-    y_scores : numpy.ndarray
-        Predicted scores.
-
-    Returns
-    -------
-    auc : float
-        Area under ROC curve.
-    """
-    # Convert to numpy arrays
-    y_true = np.asarray(y_true)
-    y_scores = np.asarray(y_scores)
-
-    # Sort by scores (descending)
-    desc_score_indices = np.argsort(y_scores)[::-1]
-    y_true_sorted = y_true[desc_score_indices]
-
-    # Calculate TPR and FPR
-    n_pos = np.sum(y_true == 1)
-    n_neg = np.sum(y_true == 0)
-
-    if n_pos == 0 or n_neg == 0:
-        return 0.5  # No discrimination possible
-
-    tp = np.cumsum(y_true_sorted)
-    fp = np.cumsum(1 - y_true_sorted)
-
-    tpr = tp / n_pos
-    fpr = fp / n_neg
-
-    # Calculate AUC using trapezoidal rule
-    return float(abs(np.trapz(tpr, fpr)))  # type: ignore
+# ROC-AUC removed - misleading for anomaly detection
+# Use precision_recall_curve() and PR-AUC instead
 
 
 def generate_sequences(
@@ -188,9 +151,7 @@ def generate_sequences(
     return sequences, labels
 
 
-def precision_recall_curve(
-    y_true: np.ndarray, y_scores: np.ndarray
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def precision_recall_curve(y_true: np.ndarray, y_scores: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Calculate precision-recall curve.
 
@@ -316,7 +277,8 @@ def validate_sequences(sequences: List[List[str]], min_length: int = 2) -> None:
 
         if len(sequence) < min_length:
             raise ValueError(
-                f"Sequence {i} has length {len(sequence)}, minimum is {min_length}"
+                f"Sequence {i} has length {len(sequence)}, minimum is {min_length}. "
+                f"Sequences need at least {min_length} elements for pattern analysis."
             )
 
         for j, element in enumerate(sequence):
@@ -325,8 +287,8 @@ def validate_sequences(sequences: List[List[str]], min_length: int = 2) -> None:
                     f"Element at sequence {i}, position {j} must be a string"
                 )
 
-            if not element:
-                raise ValueError(f"Empty string at sequence {i}, position {j}")
+            if not element or not element.strip():
+                raise ValueError(f"Empty or whitespace-only element at sequence {i}, position {j}")
 
 
 def calculate_sequence_stats(sequences: List[List[str]]) -> Dict[str, Any]:

@@ -51,16 +51,13 @@ class TestEdgeCases:
 
     def test_zero_max_order(self):
         """Test with zero max_order."""
-        # The library allows creating detector with max_order=0 but fails on fit
-        detector = anomaly_grid_py.AnomalyDetector(max_order=0)
-
-        # Should fail when trying to fit
-        with pytest.raises(RuntimeError, match="max_order must be greater than 0"):
-            detector.fit([["A", "B"], ["A", "B"]])
+        # Should fail at instantiation with proper validation
+        with pytest.raises(ValueError, match="max_order must be greater than 0"):
+            anomaly_grid_py.AnomalyDetector(max_order=0)
 
     def test_negative_max_order(self):
         """Test with negative max_order."""
-        with pytest.raises(OverflowError):
+        with pytest.raises(ValueError, match="max_order must be greater than 0"):
             anomaly_grid_py.AnomalyDetector(max_order=-1)
 
     def test_invalid_threshold_values(self):
@@ -192,22 +189,5 @@ class TestEdgeCases:
         assert isinstance(results, np.ndarray)
         assert len(results) == 2
 
-    def test_padding_edge_cases(self):
-        """Test edge cases for padding functionality."""
-        detector = anomaly_grid_py.AnomalyDetector(max_order=2)
-        detector.fit([["A", "B"], ["B", "C"]])
-
-        # Test with empty sequence - the library actually handles this gracefully
-        results_empty = detector.predict_proba_with_padding([[]])
-        assert isinstance(results_empty, np.ndarray)
-        assert len(results_empty) == 1
-
-        # Test with single element (should be padded)
-        results = detector.predict_proba_with_padding([["A"]])
-        assert isinstance(results, np.ndarray)
-        assert len(results) == 1
-
-        # Test with normal sequences (should work normally)
-        results = detector.predict_proba_with_padding([["A", "B"]])
-        assert isinstance(results, np.ndarray)
-        assert len(results) == 1
+    # Padding functionality removed in clean implementation
+    # Core detector validates minimum sequence length instead
