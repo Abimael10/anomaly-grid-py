@@ -151,7 +151,9 @@ def generate_sequences(
     return sequences, labels
 
 
-def precision_recall_curve(y_true: np.ndarray, y_scores: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def precision_recall_curve(
+    y_true: np.ndarray, y_scores: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Calculate precision-recall curve.
 
@@ -288,7 +290,9 @@ def validate_sequences(sequences: List[List[str]], min_length: int = 2) -> None:
                 )
 
             if not element or not element.strip():
-                raise ValueError(f"Empty or whitespace-only element at sequence {i}, position {j}")
+                raise ValueError(
+                    f"Empty or whitespace-only element at sequence {i}, position {j}"
+                )
 
 
 def calculate_sequence_stats(sequences: List[List[str]]) -> Dict[str, Any]:

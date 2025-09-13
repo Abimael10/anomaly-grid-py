@@ -1,15 +1,16 @@
 """Type stubs for anomaly_grid_py."""
 
 from typing import Any, Dict, List, Optional, Tuple, Union
+
 import numpy as np
 
 class AnomalyDetector:
     """Simple anomaly detector for sequential data."""
-    
+
     def __init__(self, max_order: int = 3) -> None:
         """
         Initialize anomaly detector.
-        
+
         Parameters
         ----------
         max_order : int, default=3
@@ -20,12 +21,12 @@ class AnomalyDetector:
     def fit(self, X: List[List[str]]) -> "AnomalyDetector":
         """
         Train detector on normal sequences.
-        
+
         Parameters
         ----------
         X : List[List[str]]
             Training sequences (normal data only).
-            
+
         Returns
         -------
         self : AnomalyDetector
@@ -36,12 +37,12 @@ class AnomalyDetector:
     def predict_proba(self, X: List[List[str]]) -> np.ndarray:
         """
         Predict anomaly probabilities.
-        
+
         Parameters
         ----------
         X : List[List[str]]
             Sequences to score.
-            
+
         Returns
         -------
         scores : np.ndarray
@@ -53,14 +54,14 @@ class AnomalyDetector:
     def predict(self, X: List[List[str]], threshold: float = 0.5) -> np.ndarray:
         """
         Predict binary anomaly labels.
-        
+
         Parameters
         ----------
         X : List[List[str]]
             Sequences to classify.
         threshold : float, default=0.5
             Anomaly threshold.
-            
+
         Returns
         -------
         predictions : np.ndarray
@@ -71,7 +72,7 @@ class AnomalyDetector:
     def get_performance_metrics(self) -> Dict[str, Any]:
         """
         Get performance metrics.
-        
+
         Returns
         -------
         metrics : Dict[str, Any]
@@ -97,8 +98,7 @@ def train_test_split(
     ...
 
 def precision_recall_curve(
-    y_true: Union[List[int], np.ndarray], 
-    y_scores: Union[List[float], np.ndarray]
+    y_true: Union[List[int], np.ndarray], y_scores: Union[List[float], np.ndarray]
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Calculate precision-recall curve for anomaly detection evaluation."""
     ...
@@ -114,16 +114,11 @@ def generate_sequences(
     """Generate synthetic sequences for testing."""
     ...
 
-def validate_sequences(
-    sequences: List[List[str]], 
-    min_length: int = 1
-) -> None:
+def validate_sequences(sequences: List[List[str]], min_length: int = 1) -> None:
     """Validate sequence format and content."""
     ...
 
-def calculate_sequence_stats(
-    sequences: List[List[str]]
-) -> Dict[str, Any]:
+def calculate_sequence_stats(sequences: List[List[str]]) -> Dict[str, Any]:
     """Calculate statistics for sequences."""
     ...
 
