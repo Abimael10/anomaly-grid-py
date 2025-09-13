@@ -1,4 +1,4 @@
-# Anomaly Grid Python
+# anomaly-grid-py
 
 [![CI](https://github.com/abimael10/anomaly-grid-py/workflows/CI/badge.svg)](https://github.com/abimael10/anomaly-grid-py/actions)
 [![PyPI version](https://img.shields.io/pypi/v/anomaly-grid-py.svg)](https://pypi.org/project/anomaly-grid-py/)
