@@ -1,11 +1,12 @@
 # Anomaly Grid Python
 
-[![PyPI version](https://badge.fury.io/py/anomaly-grid-py.svg)](https://badge.fury.io/py/anomaly-grid-py)
+[![CI](https://github.com/abimael10/anomaly-grid-py/workflows/CI/badge.svg)](https://github.com/abimael10/anomaly-grid-py/actions)
+[![PyPI version](https://img.shields.io/pypi/v/anomaly-grid-py.svg)](https://pypi.org/project/anomaly-grid-py/)
 [![Python versions](https://img.shields.io/pypi/pyversions/anomaly-grid-py.svg)](https://pypi.org/project/anomaly-grid-py/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Downloads](https://img.shields.io/pypi/dm/anomaly-grid-py.svg)](https://pypi.org/project/anomaly-grid-py/)
 
-Sequence anomaly detection using Markov models.
+Deviation detection using variable-order Markov-chains in finite alphabet sequences.
 
 ## Installation
 
