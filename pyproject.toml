@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "anomaly-grid-py"
-version = "0.4.0"
+version = "0.4.1"
 description = "Deviation detection using variable-order Markov-chains in finite alphabet sequences"
 authors = [{name = "Juan Abimael Santos Castillo", email = "juanabimael@gmail.com"}]
 license = {text = "MIT"}

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.1] - 2025-01-27
+
+### Changed
+- Improved scoring system performance with better weight distribution
+- Enhanced adaptive calibration for more accurate anomaly detection
+- Optimized likelihood calculation for better separation
+
+### Fixed
+- Better anomaly separation between normal and anomalous sequences
+- Improved numerical stability in score calculations
+
 ## [0.4.0] - 2025-09-13
 
 ### Added
