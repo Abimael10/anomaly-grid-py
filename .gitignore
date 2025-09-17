@@ -58,14 +58,14 @@ htmlcov/
 *_test.py
 comprehensive_*.py
 demonstrate_*.py
-benchmark.ipynb
+#benchmark.ipynb
 
 # Documentation drafts
 *_DRAFT.md
 *_WIP.md
 
 # Jupyter notebooks (unless specifically needed)
-*.ipynb
+#*.ipynb
 
 # Development scripts (keep essential ones)
 scripts/audit/
