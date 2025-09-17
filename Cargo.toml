@@ -1,6 +1,6 @@
 [package]
 name = "anomaly-grid-py"
-version = "0.4.2"
+version = "0.4.3"
 edition = "2021"
 
 [lib]
@@ -8,10 +8,16 @@ name = "_core"
 crate-type = ["cdylib"]
 
 [dependencies]
-# PyO3 for Python bindings - essential for performance
-pyo3 = { version = "0.21", features = ["extension-module"] }
-anomaly-grid = "0.3.0"
-# NumPy integration - essential for zero-copy operations
-numpy = "0.21"
+pyo3 = { version = "0.21", features = ["extension-module"], default-features = false }
+anomaly-grid = { version = "0.3.0", default-features = false }
+numpy = { version = "0.21", default-features = false }
 
 # NO OTHER DEPENDENCIES - everything else custom implemented
+
+[profile.release]
+opt-level = "z"
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = true
+rpath = false

@@ -311,41 +311,7 @@ impl PyAnomalyDetector {
         -avg_log_prob // Negative log-likelihood as anomaly score
     }
 
-    /// Get smoothed probability for unseen transitions
-    fn get_smoothed_probability(&self, context: &[String], _token: &str) -> f64 {
-        // Simple Good-Turing smoothing
-        let context_total = if let Some(next_tokens) = self.transition_counts.get(context) {
-            next_tokens.values().sum::<f64>()
-        } else {
-            0.0
-        };
 
-        // Smoothing parameter based on vocabulary size
-        let smoothing = 1.0 / (self.sequence_stats.vocab_size as f64).sqrt();
-        smoothing / (context_total + smoothing * self.sequence_stats.vocab_size as f64)
-    }
-
-    /// Get back-off probability for unseen contexts
-    fn get_backoff_probability(&self, token: &str) -> f64 {
-        // Use unigram probability as back-off
-        let mut total_count = 0.0;
-        let mut token_count = 0.0;
-
-        for (_, next_tokens) in &self.transition_counts {
-            for (t, &count) in next_tokens {
-                total_count += count;
-                if t == token {
-                    token_count += count;
-                }
-            }
-        }
-
-        if total_count > 0.0 {
-            token_count / total_count
-        } else {
-            1.0 / self.sequence_stats.vocab_size as f64
-        }
-    }
 
     /// IMPROVED: Better point anomaly aggregation
     fn calculate_point_anomaly_score(

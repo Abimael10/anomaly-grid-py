@@ -1,6 +1,13 @@
 # Changelog
 
-## [0.4.2] - 2025-01-27
+## [0.4.3] - 2025-09-17
+
+### Performance
+- Reduced package size by 25.6%
+- Rust compiler optimizations and dependency feature reduction
+- Removed unused code methods from removed implementations
+
+## [0.4.2] - 2025-09-16
 
 ### Documentation
 - Updated README with performance benchmarks from finite alphabet sequence analysis

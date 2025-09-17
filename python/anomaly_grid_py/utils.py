@@ -1,7 +1,4 @@
-"""
-Lightweight utilities with no external dependencies.
-Custom implementations of common operations.
-"""
+"""Utilities."""
 
 from typing import Any, Dict, List, Tuple
 
@@ -13,22 +10,7 @@ def train_test_split(
     test_size: float = 0.2,
     random_state: int = None,  # type: ignore
 ) -> Tuple[List[List[str]], List[List[str]]]:
-    """
-    Lightweight train/test split without sklearn dependency.
-
-    Parameters
-    ----------
-    sequences : list of lists
-        Input sequences.
-    test_size : float, default=0.2
-        Proportion for test set.
-    random_state : int, optional
-        Random seed for reproducibility.
-
-    Returns
-    -------
-    train_sequences, test_sequences : tuple of lists
-    """
+    """Train/test split."""
     if random_state is not None:
         np.random.seed(random_state)
 
@@ -49,25 +31,7 @@ def train_test_split(
 def cross_val_score(
     estimator, X: List[List[str]], y: List[int], cv: int = 3
 ) -> np.ndarray:
-    """
-    Lightweight cross-validation without sklearn dependency.
-
-    Parameters
-    ----------
-    estimator : AnomalyDetector
-        Fitted estimator.
-    X : list of lists
-        Input sequences.
-    y : list of int
-        True labels (0=normal, 1=anomaly).
-    cv : int, default=3
-        Number of folds.
-
-    Returns
-    -------
-    scores : numpy.ndarray
-        Cross-validation scores.
-    """
+    """Cross-validation."""
     n_samples = len(X)
     fold_size = n_samples // cv
     scores = []
@@ -96,32 +60,10 @@ def cross_val_score(
     return np.array(scores)
 
 
-# ROC-AUC removed - misleading for anomaly detection
-# Use precision_recall_curve() and PR-AUC instead
-
-
 def generate_sequences(
     n_sequences: int, seq_length: int, alphabet: List[str], anomaly_rate: float = 0.1
 ) -> Tuple[List[List[str]], List[int]]:
-    """
-    Generate synthetic sequences for testing.
-
-    Parameters
-    ----------
-    n_sequences : int
-        Number of sequences to generate.
-    seq_length : int
-        Length of each sequence.
-    alphabet : list of str
-        Available states.
-    anomaly_rate : float, default=0.1
-        Proportion of anomalous sequences.
-
-    Returns
-    -------
-    sequences, labels : tuple
-        Generated sequences and binary labels.
-    """
+    """Generate synthetic sequences."""
     sequences = []
     labels = []
 
@@ -154,21 +96,7 @@ def generate_sequences(
 def precision_recall_curve(
     y_true: np.ndarray, y_scores: np.ndarray
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """
-    Calculate precision-recall curve.
-
-    Parameters
-    ----------
-    y_true : numpy.ndarray
-        True binary labels.
-    y_scores : numpy.ndarray
-        Predicted scores.
-
-    Returns
-    -------
-    precision, recall, thresholds : tuple of arrays
-        Precision, recall, and threshold values.
-    """
+    """Calculate precision-recall curve."""
     # Convert to numpy arrays
     y_true = np.asarray(y_true)
     y_scores = np.asarray(y_scores)
@@ -192,7 +120,7 @@ def precision_recall_curve(
 
 
 class PerformanceTimer:
-    """Lightweight performance timing utility."""
+    """Performance timer."""
 
     def __init__(self):
         self.times = {}
@@ -211,7 +139,7 @@ class PerformanceTimer:
         self.elapsed = time.perf_counter() - self.start_time
 
     def time_operation(self, name: str, func, *args, **kwargs):
-        """Time a function call."""
+        """Time function."""
         import time
 
         start = time.perf_counter()
@@ -221,25 +149,18 @@ class PerformanceTimer:
         return result
 
     def get_times(self) -> dict:
-        """Get all recorded times."""
+        """Get times."""
         return self.times.copy()
 
     def reset(self):
-        """Reset all recorded times."""
+        """Reset."""
         self.times.clear()
         self.start_time = None
         self.elapsed = None
 
 
 def memory_usage() -> float:
-    """
-    Get current memory usage in MB.
-
-    Returns
-    -------
-    memory_mb : float
-        Current memory usage in megabytes.
-    """
+    """Get memory usage in MB."""
     try:
         import os
 
@@ -255,21 +176,7 @@ def memory_usage() -> float:
 
 
 def validate_sequences(sequences: List[List[str]], min_length: int = 2) -> None:
-    """
-    Validate sequence format and content.
-
-    Parameters
-    ----------
-    sequences : list of lists
-        Sequences to validate.
-    min_length : int, default=2
-        Minimum sequence length.
-
-    Raises
-    ------
-    ValueError
-        If sequences are invalid.
-    """
+    """Validate sequences."""
     if not sequences:
         raise ValueError("Empty sequence list")
 
@@ -296,19 +203,7 @@ def validate_sequences(sequences: List[List[str]], min_length: int = 2) -> None:
 
 
 def calculate_sequence_stats(sequences: List[List[str]]) -> Dict[str, Any]:
-    """
-    Calculate statistics for sequences.
-
-    Parameters
-    ----------
-    sequences : list of lists
-        Input sequences.
-
-    Returns
-    -------
-    stats : dict
-        Sequence statistics.
-    """
+    """Calculate sequence stats."""
     if not sequences:
         return {}
 
