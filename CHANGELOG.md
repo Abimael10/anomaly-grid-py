@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.2] - 2025-01-27
+
+### Documentation
+- Updated README with performance benchmarks from finite alphabet sequence analysis
+- Added evidence-based recommendations (F1: 0.71 for 16-state protocols, +6.2% vs traditional ML)
+- Added some API examples to the root documentation
+- Clear niche positioning for finite alphabet sequences (≤20 symbols) while highlighting the opportunity to batch process the states to reduce the alphabets even more
+
 ## [0.4.1] - 2025-01-27
 
 ### Changed
