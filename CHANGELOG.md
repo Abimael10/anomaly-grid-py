@@ -15,7 +15,7 @@
 - Added some API examples to the root documentation
 - Clear niche positioning for finite alphabet sequences (≤20 symbols) while highlighting the opportunity to batch process the states to reduce the alphabets even more
 
-## [0.4.1] - 2025-01-27
+## [0.4.1] - 2025-09-14
 
 ### Changed
 - Improved scoring system performance with better weight distribution
